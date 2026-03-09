@@ -1,0 +1,35 @@
+<div class="p-6 min-h-screen transition-colors duration-300 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white">
+  <h1 class="text-2xl font-semibold mb-6">Customer Care</h1>
+
+  <div class="flex gap-3 border-b dark:border-gray-700 pb-2">
+    <button
+      class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+      [ngClass]="activeTab === 'call' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700'"
+      (click)="activeTab = 'call'"
+    >
+      Call
+    </button>
+
+    <button
+      class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+      [ngClass]="activeTab === 'email' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700'"
+      (click)="activeTab = 'email'"
+    >
+      Email
+    </button>
+
+    <button
+      class="px-4 py-2 rounded-md text-sm font-medium transition-all"
+      [ngClass]="activeTab === 'whatsapp' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700'"
+      (click)="activeTab = 'whatsapp'"
+    >
+      WhatsApp
+    </button>
+  </div>
+
+  <div class="mt-6">
+    <app-call *ngIf="activeTab === 'call'"></app-call>
+    <app-email *ngIf="activeTab === 'email'"></app-email>
+    <app-whatsapp *ngIf="activeTab === 'whatsapp'"></app-whatsapp>
+  </div>
+</div>

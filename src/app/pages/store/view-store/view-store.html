@@ -1,0 +1,67 @@
+<div
+  class="min-h-screen flex flex-col items-center justify-center p-6 transition-all duration-500"
+  [ngClass]="themeService.isDarkMode() ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800'"
+>
+  <h1
+    class="text-3xl font-bold mb-8"
+    [ngClass]="themeService.isDarkMode() ? 'text-blue-400' : 'text-blue-600'"
+  >
+    Store Overview
+  </h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl mb-10">
+    <div
+      *ngFor="let item of stats"
+      class="rounded-2xl p-5 flex flex-col items-center justify-center border shadow-md transition-all duration-300"
+      [ngClass]="themeService.isDarkMode() ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' : 'bg-blue-50 border-blue-200 hover:shadow-lg'"
+    >
+      <h2
+        class="font-semibold text-lg mb-2"
+        [ngClass]="themeService.isDarkMode() ? 'text-blue-400' : 'text-blue-600'"
+      >
+        {{ item.label }}
+      </h2>
+      <p class="text-2xl font-bold">{{ item.value }}</p>
+    </div>
+  </div>
+
+  <div
+    class="w-full max-w-4xl rounded-2xl p-6 border shadow-md transition-all duration-300"
+    [ngClass]="themeService.isDarkMode() ? 'bg-gray-800 border-gray-700' : 'bg-blue-50 border-blue-200'"
+  >
+    <h3
+      class="text-xl font-semibold mb-4 text-center"
+      [ngClass]="themeService.isDarkMode() ? 'text-blue-400' : 'text-blue-600'"
+    >
+      Weekly Sales Chart
+    </h3>
+    <div class="flex items-end justify-between h-40 px-6">
+      <div *ngFor="let val of chartData; let i = index" class="flex flex-col items-center">
+        <div
+          class="w-6 rounded-t-md transition-all duration-500"
+          [ngClass]="themeService.isDarkMode() ? 'bg-blue-500' : 'bg-blue-600'"
+          [style.height]="val + '%'"
+        ></div>
+        <span
+          class="text-xs mt-2"
+          [ngClass]="themeService.isDarkMode() ? 'text-gray-400' : 'text-gray-600'"
+        >
+          W{{ i + 1 }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="mt-8 text-sm"
+    [ngClass]="themeService.isDarkMode() ? 'text-gray-400' : 'text-gray-600'"
+  >
+    Last updated:
+    <span
+      class="font-medium"
+      [ngClass]="themeService.isDarkMode() ? 'text-blue-400' : 'text-blue-600'"
+    >
+      October 25, 2025
+    </span>
+  </div>
+</div>

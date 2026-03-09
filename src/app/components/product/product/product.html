@@ -1,0 +1,133 @@
+<div class="max-w-6xl mx-auto p-6">
+  <h1 class="text-3xl font-bold mb-6 text-center">Our Products</h1>
+
+  <!-- Action Buttons -->
+  <div class="flex flex-wrap gap-4 mb-6 justify-center">
+    <button 
+      (click)="showAddProductForm = !showAddProductForm"
+      class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+      {{ showAddProductForm ? 'Cancel' : '+ Add Product' }}
+    </button>
+    
+    <button 
+      (click)="showGetById = !showGetById"
+      class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">
+      {{ showGetById ? 'Cancel' : 'Get by ID' }}
+    </button>
+  </div>
+
+  <!-- Add Product Form -->
+  <div *ngIf="showAddProductForm" class="bg-gray-100 dark:bg-gray-700 p-6 rounded-lg mb-6">
+    <h2 class="text-xl font-bold mb-4">Add New Product</h2>
+    <form (ngSubmit)="addProduct()" #addForm="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input type="text" [(ngModel)]="newProduct.name" name="name" placeholder="Product Name" required
+        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
+      <input type="text" [(ngModel)]="newProduct.description" name="description" placeholder="Description"
+        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
+      <input type="number" [(ngModel)]="newProduct.price" name="price" placeholder="Price" required
+        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
+      <input type="number" [(ngModel)]="newProduct.stock" name="stock" placeholder="Stock" required
+        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
+      <input type="text" [(ngModel)]="newProduct.barcode" name="barcode" placeholder="Barcode"
+        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
+      <input type="date" [(ngModel)]="newProduct.expiry_date" name="expiry_date" placeholder="Expiry Date"
+        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
+      <input type="text" [(ngModel)]="newProduct.imageUrl" name="imageUrl" placeholder="Image URL"
+        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
+      <input type="number" [(ngModel)]="newProduct.store_id" name="store_id" placeholder="Store ID"
+        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
+      <input type="number" [(ngModel)]="newProduct.category_id" name="category_id" placeholder="Category ID"
+        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
+      <button type="submit" [disabled]="!addForm.valid"
+        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:bg-gray-400 transition col-span-2">
+        Add Product
+      </button>
+    </form>
+  </div>
+
+  <!-- Get Product by ID -->
+  <div *ngIf="showGetById" class="bg-gray-100 dark:bg-gray-700 p-6 rounded-lg mb-6">
+    <h2 class="text-xl font-bold mb-4">Get Product by ID</h2>
+    <div class="flex gap-4">
+      <input type="number" [(ngModel)]="searchId" placeholder="Enter Product ID"
+        class="p-2 border rounded flex-1 dark:bg-gray-600 dark:border-gray-500">
+      <button (click)="getProductById()"
+        class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">
+        Search
+      </button>
+    </div>
+    
+    <!-- Search Result -->
+    <div *ngIf="foundProduct" class="mt-4 p-4 bg-white dark:bg-gray-800 rounded">
+      <h3 class="font-bold">Product Found:</h3>
+      <p><strong>Name:</strong> {{ foundProduct.name }}</p>
+      <p><strong>Description:</strong> {{ foundProduct.description }}</p>
+      <p><strong>Price:</strong> ₹{{ foundProduct.price }}</p>
+      <p><strong>Stock:</strong> {{ foundProduct.stock }}</p>
+      <p *ngIf="foundProduct.barcode"><strong>Barcode:</strong> {{ foundProduct.barcode }}</p>
+      <p *ngIf="foundProduct.expiry_date"><strong>Expiry:</strong> {{ foundProduct.expiry_date | date:'dd/MM/yyyy' }}</p>
+    </div>
+    
+    <div *ngIf="searchError" class="mt-4 text-red-500">
+      {{ searchError }}
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="flex justify-center items-center py-16">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error()" class="text-center py-16">
+    <p class="text-red-500 text-lg mb-4">{{ error() }}</p>
+    <button (click)="loadProducts()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Try Again
+    </button>
+  </div>
+
+  <!-- Products Grid -->
+  <div *ngIf="!isLoading() && !error()" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let product of products()" 
+         class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden flex flex-col">
+
+      <!-- Product Image -->
+      <img [src]="product.imageUrl || 'https://via.placeholder.com/300x200'" alt="{{product.name}}" 
+           class="h-48 w-full object-cover">
+
+      <!-- Product Info -->
+      <div class="p-4 flex-1 flex flex-col justify-between">
+        <div>
+          <h2 class="text-xl font-semibold mb-2">{{ product.name }}</h2>
+          <p class="text-gray-600 dark:text-gray-300 mb-4">{{ product.description }}</p>
+          <p class="text-lg font-bold mb-2">₹{{ product.price }}</p>
+          <p class="text-sm text-gray-500">Stock: {{ product.stock }}</p>
+          <!-- Barcode and Expiry Display -->
+          <p *ngIf="product.barcode" class="text-xs text-gray-500">Barcode: {{ product.barcode }}</p>
+          <p *ngIf="product.expiry_date" class="text-xs text-gray-500">Expiry: {{ product.expiry_date | date:'dd/MM/yyyy' }}</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-4 flex gap-2">
+          <button 
+            (click)="addToCart(product)"
+            [disabled]="!product.stock || product.stock === 0"
+            class="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition">
+            {{ (product.stock ?? 0) > 0 ? 'Add to Cart' : 'Out of Stock' }}
+          </button>
+          <button 
+            *ngIf="product.id"
+            (click)="deleteProduct(product.id!)"
+            class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading() && !error() && products().length === 0" class="text-center py-16 text-gray-500">
+    No products available.
+  </div>
+</div>

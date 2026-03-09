@@ -1,0 +1,50 @@
+<div
+  class="relative rounded-2xl shadow hover:shadow-lg transition duration-300 overflow-hidden"
+  [ngClass]="themeService.isDarkMode() ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'"
+>
+  <span class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
+    {{ product.discount }}
+  </span>
+  <img
+    [src]="product.image"
+    [alt]="product.name"
+    loading="lazy"
+    class="h-40 w-full object-cover rounded-t-2xl transition-transform duration-300 hover:scale-105"
+  />
+  <div class="p-4">
+    <h2 class="text-lg font-bold line-clamp-1">{{ product.name }}</h2>
+    <p
+      class="text-sm mt-1 line-clamp-2"
+      [ngClass]="themeService.isDarkMode() ? 'text-gray-300' : 'text-gray-600'"
+    >
+      {{ product.desc }}
+    </p>
+    
+    <!-- Barcode and Expiry Date Display -->
+    <div class="mt-2 text-xs" [ngClass]="themeService.isDarkMode() ? 'text-gray-400' : 'text-gray-500'">
+      <div *ngIf="product.barcode" class="flex items-center gap-1">
+        <span class="font-medium">Barcode:</span>
+        <span>{{ product.barcode }}</span>
+      </div>
+      <div *ngIf="product.expiry_date" class="flex items-center gap-1">
+        <span class="font-medium">Expiry:</span>
+        <span>{{ product.expiry_date | date:'dd/MM/yyyy' }}</span>
+      </div>
+    </div>
+    
+    <div class="mt-3 flex justify-between items-center">
+      <span
+        class="text-xl font-semibold"
+        [ngClass]="themeService.isDarkMode() ? 'text-blue-400' : 'text-blue-600'"
+      >
+        {{ product.price }}
+      </span>
+      <button
+        class="text-sm px-3 py-1.5 rounded-lg transition"
+        [ngClass]="themeService.isDarkMode() ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'"
+      >
+        Add to Cart
+      </button>
+    </div>
+  </div>
+</div>

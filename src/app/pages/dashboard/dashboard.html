@@ -1,0 +1,108 @@
+<div
+  class="min-h-screen p-6 transition-all duration-300 bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
+>
+  <app-image-slider></app-image-slider>
+
+  <div class="max-w-7xl mx-auto mt-10 space-y-8">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+      <h1 class="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-0">Sunshine Groceries</h1>
+      <div class="flex items-center space-x-3">
+        <button
+          class="p-2 rounded-full shadow transition"
+          [ngClass]="themeService.isDarkMode() ? 'bg-gray-800 hover:bg-gray-700 text-gray-200' : 'bg-white hover:bg-blue-100 text-gray-700'"
+        >
+          🔍
+        </button>
+        <button
+          class="p-2 rounded-full shadow transition"
+          [ngClass]="themeService.isDarkMode() ? 'bg-gray-800 hover:bg-gray-700 text-gray-200' : 'bg-white hover:bg-blue-100 text-gray-700'"
+        >
+          👤
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div
+        class="col-span-2 rounded-xl p-5 shadow border transition"
+        [ngClass]="themeService.isDarkMode() ? 'bg-gray-800 border-gray-700' : 'bg-white border-blue-100'"
+      >
+        <h2 class="text-lg font-semibold mb-3">Sales for the Week</h2>
+        <div class="h-40">
+          <ngx-charts-bar-vertical
+            [view]="[600, 160]"
+            [results]="salesData"
+            [xAxis]="true"
+            [yAxis]="true"
+            [legend]="false"
+            [showXAxisLabel]="false"
+            [showYAxisLabel]="false"
+            [customColors]="customColors"
+          >
+          </ngx-charts-bar-vertical>
+        </div>
+        <div class="flex justify-between text-sm mt-3" [ngClass]="themeService.isDarkMode() ? 'text-gray-300' : 'text-gray-600'">
+          <p>In Sales value <span class="font-semibold" [ngClass]="themeService.isDarkMode() ? 'text-gray-100' : 'text-gray-800'">$23,450</span></p>
+          <p>Low Stock Items <span class="font-semibold" [ngClass]="themeService.isDarkMode() ? 'text-gray-100' : 'text-gray-800'">12 items</span></p>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-orange-400 to-orange-500 text-white rounded-xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1">
+        <div>
+          <h2 class="text-lg font-semibold mb-2">Restock Reminder</h2>
+          <p>Order Bananas from Greenfield Produce</p>
+        </div>
+        <button class="mt-5 py-2 px-4 bg-white text-orange-600 font-semibold rounded-lg hover:bg-orange-100">
+          Reorder
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div *ngFor="let card of stats; let i = index" class="p-5 rounded-xl shadow-lg hover:shadow-xl border transition-all duration-300 transform hover:-translate-y-1" [ngClass]="['bg-gradient-to-br', getCardGradient(i), themeService.isDarkMode() ? 'border-gray-700' : 'border-blue-100']">
+        <h3 class="text-lg font-bold text-white">{{card.title}}</h3>
+        <p class="text-md font-bold mt-1 text-white">{{card.value}}</p>
+        <p *ngIf="card.sub" class="text-sm text-blue-100">{{card.sub}}</p>
+      </div>
+    </div>
+
+    <div class="rounded-xl shadow border overflow-x-auto p-5 transition" [ngClass]="themeService.isDarkMode() ? 'bg-gray-800 border-gray-700' : 'bg-white border-blue-100'">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">Inventory Items</h2>
+        <input type="text" placeholder="Search items..." class="px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2" [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border border-gray-600 text-gray-100 focus:ring-blue-500' : 'bg-white border border-gray-300 focus:ring-blue-300'">
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2" [ngClass]="themeService.isDarkMode() ? 'border-gray-200' : 'border-blue-600'"></div>
+      </div>
+
+      <!-- Products Table -->
+      <table *ngIf="!isLoading" class="w-full text-sm text-left">
+        <thead [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 text-gray-200' : 'bg-blue-100'">
+          <tr>
+            <th class="p-3">Item</th>
+            <th class="p-3">Category</th>
+            <th class="p-3">In Stock</th>
+            <th class="p-3">Supplier</th>
+            <th class="p-3">Unit Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let i of inventoryItems" class="border-t transition" [ngClass]="themeService.isDarkMode() ? 'border-gray-700 hover:bg-gray-700' : 'hover:bg-blue-50'">
+            <td class="p-3">{{i.item}}</td>
+            <td class="p-3">{{i.category}}</td>
+            <td class="p-3">{{i.stock}}</td>
+            <td class="p-3">{{i.supplier}}</td>
+            <td class="p-3 font-semibold">{{i.cost}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && inventoryItems.length === 0" class="text-center py-8 text-gray-500">
+        No products found.
+      </div>
+    </div>
+  </div>
+</div>

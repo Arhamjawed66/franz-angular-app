@@ -1,0 +1,91 @@
+<section
+  class="min-h-screen flex items-center justify-center px-6 py-8 transition-all duration-300"
+  [ngClass]="themeService.isDarkMode() ? 'bg-gray-900' : 'bg-gray-50'"
+>
+  <div
+    class="w-full max-w-md rounded-xl shadow-lg border transition-all duration-300 relative"
+    [ngClass]="themeService.isDarkMode() ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'"
+  >
+    <div class="absolute inset-0 rounded-xl pointer-events-none shadow-[0_0_25px_2px_rgba(59,130,246,0.15)] dark:shadow-[0_0_25px_2px_rgba(59,130,246,0.25)]"></div>
+    <div class="flex justify-center mt-8 relative z-10">
+      <a href="#" class="flex items-center text-2xl font-bold transition-colors duration-300" [ngClass]="themeService.isDarkMode() ? 'text-blue-400' : 'text-blue-600'">
+        FRANZ FOOD
+      </a>
+    </div>
+    <div class="p-6 sm:p-8 relative z-10">
+      <h1
+        class="text-xl font-bold text-center md:text-2xl mb-2 transition-colors duration-300"
+        [ngClass]="themeService.isDarkMode() ? 'text-white' : 'text-gray-900'"
+      >
+        Create your account
+      </h1>
+      <p
+        class="text-center text-sm mb-6 transition-colors duration-300"
+        [ngClass]="themeService.isDarkMode() ? 'text-gray-400' : 'text-gray-500'"
+      >
+        Join us and start managing your store efficiently.
+      </p>
+      <form class="space-y-5" (ngSubmit)="handleSubmit()">
+        <div>
+          <label for="name" class="block mb-2 text-sm font-medium transition-colors duration-300" [ngClass]="themeService.isDarkMode() ? 'text-gray-300' : 'text-gray-700'">Full Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            [(ngModel)]="formData.name"
+            placeholder="Frnaz Food"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+            [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-gray-50 border-gray-300 text-gray-900'"
+            required
+          />
+        </div>
+        <div>
+          <label for="email" class="block mb-2 text-sm font-medium transition-colors duration-300" [ngClass]="themeService.isDarkMode() ? 'text-gray-300' : 'text-gray-700'">Your email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="formData.email"
+            placeholder="name@company.com"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+            [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-gray-50 border-gray-300 text-gray-900'"
+            required
+          />
+        </div>
+        <div>
+          <label for="password" class="block mb-2 text-sm font-medium transition-colors duration-300" [ngClass]="themeService.isDarkMode() ? 'text-gray-300' : 'text-gray-700'">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            [(ngModel)]="formData.password"
+            placeholder="••••••••"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+            [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-gray-50 border-gray-300 text-gray-900'"
+            required
+          />
+        </div>
+        <div>
+          <label for="confirmPassword" class="block mb-2 text-sm font-medium transition-colors duration-300" [ngClass]="themeService.isDarkMode() ? 'text-gray-300' : 'text-gray-700'">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            [(ngModel)]="formData.confirmPassword"
+            placeholder="••••••••"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
+            [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-gray-50 border-gray-300 text-gray-900'"
+            required
+          />
+        </div>
+        <button type="submit" class="w-full py-3 px-5 text-white bg-blue-600 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-all">
+          Sign up
+        </button>
+        <p class="text-sm text-center transition-colors duration-300" [ngClass]="themeService.isDarkMode() ? 'text-gray-400' : 'text-gray-600'">
+          Already have an account?
+          <a routerLink="/login" class="font-medium text-blue-600 hover:underline">Log IN</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</section>

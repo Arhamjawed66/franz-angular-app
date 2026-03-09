@@ -1,0 +1,175 @@
+<div
+  class="h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300 overflow-hidden">
+  <app-navbar (toggleSidebar)="isSidebarOpen.set(!isSidebarOpen())"></app-navbar>
+
+  <div class="flex flex-1 pt-16 relative overflow-hidden">
+    <aside class="fixed inset-y-0 left-0 z-40 shadow-lg transition-all duration-300 ease-in-out" [ngClass]="{
+        'bg-gray-900 text-white': themeService.isDarkMode(),
+        'bg-blue-600 text-white': !themeService.isDarkMode(),
+        'w-64': isSidebarOpen(),
+        'w-16': !isSidebarOpen(),
+        'translate-x-0': isSidebarOpen(),
+        '-translate-x-full md:translate-x-0': !isSidebarOpen()
+      }">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-white/20 flex-shrink-0">
+        <button (click)="isSidebarOpen.set(!isSidebarOpen())"
+          class="flex items-center justify-center gap-2 hover:bg-white/20 px-2 py-2 rounded transition">
+          <fa-icon [icon]="isSidebarOpen() ? faTimes : faBars" class="text-lg"></fa-icon>
+          <span *ngIf="isSidebarOpen()" class="hidden md:inline text-sm font-medium">Hide</span>
+        </button>
+      </div>
+
+      <nav class="flex-1 px-2 py-4 space-y-2 transition-all duration-300"
+        [ngClass]="isSidebarOpen() ? 'overflow-y-auto' : 'overflow-hidden'">
+        <div class="relative group">
+          <a routerLink="/dashboard" (click)="handleLinkClick()"
+            class="flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200"
+            routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}"
+            [ngClass]="themeService.isDarkMode() ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-blue-500/70 text-white'">
+            <fa-icon [icon]="faHome" class="text-lg"></fa-icon>
+            <span *ngIf="isSidebarOpen()" class="text-sm font-medium">Dashboard</span>
+          </a>
+          <span *ngIf="!isSidebarOpen()"
+            class="absolute left-full top-1/2 -translate-y-1/2 ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap transition">
+            Dashboard
+          </span>
+        </div>
+
+        <div>
+          <button (click)="toggleDropdown('store')"
+            class="w-full flex items-center justify-between px-3 py-2 rounded-md transition-all duration-200"
+            [ngClass]="themeService.isDarkMode() ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-blue-500/70 text-white'">
+            <span class="flex items-center gap-3">
+              <fa-icon [icon]="faStore" class="text-lg"></fa-icon>
+              <span *ngIf="isSidebarOpen()" class="text-sm font-medium">Store</span>
+            </span>
+            <fa-icon *ngIf="isSidebarOpen()" [icon]="openDropdown() === 'store' ? faChevronDown : faChevronRight"
+              class="text-xs"></fa-icon>
+          </button>
+          <div *ngIf="isSidebarOpen() && openDropdown() === 'store'" class="ml-9 mt-1 space-y-1">
+            <a *ngFor="let link of [{ to: '/store/create', label: 'Create' }, { to: '/store/update', label: 'Update' }, { to: '/store/notification', label: 'Notification' }, { to: '/store/reminder', label: 'Reminder' }]"
+              [routerLink]="link.to" (click)="handleLinkClick()" class="block text-sm rounded-md px-3 py-1.5 transition"
+              [ngClass]="themeService.isDarkMode() ? 'text-gray-200 hover:bg-gray-700' : 'text-white hover:bg-white/20'">
+              {{ link.label }}
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <button (click)="toggleDropdown('category')"
+            class="w-full flex items-center justify-between px-3 py-2 rounded-md transition-all duration-200"
+            [ngClass]="themeService.isDarkMode() ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-blue-500/70 text-white'">
+            <span class="flex items-center gap-3">
+              <fa-icon [icon]="faListAlt" class="text-lg"></fa-icon>
+              <span *ngIf="isSidebarOpen()" class="text-sm font-medium">Category</span>
+            </span>
+            <fa-icon *ngIf="isSidebarOpen()" [icon]="openDropdown() === 'category' ? faChevronDown : faChevronRight"
+              class="text-xs"></fa-icon>
+          </button>
+          <div *ngIf="isSidebarOpen() && openDropdown() === 'category'" class="ml-9 mt-1 space-y-1">
+            <a *ngFor="let link of [{ to: '/category/create', label: 'Create Category' }, { to: '/category/update', label: 'Update Category' }, { to: '/category/view', label: 'View Category' }]"
+              [routerLink]="link.to" (click)="handleLinkClick()" class="block text-sm rounded-md px-3 py-1.5 transition"
+              [ngClass]="themeService.isDarkMode() ? 'text-gray-200 hover:bg-gray-700' : 'text-white hover:bg-white/20'">
+              {{ link.label }}
+            </a>
+          </div>
+        </div>
+
+        <a routerLink="/inventory" routerLinkActive="active-link" (click)="handleLinkClick()"
+          class="flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200"
+          [ngClass]="themeService.isDarkMode() ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-blue-500/70 text-white'">
+          <fa-icon [icon]="faCartPlus" class="text-lg"></fa-icon>
+          <span *ngIf="isSidebarOpen()" class="text-sm font-medium">Inventory</span>
+        </a>
+
+        <div>
+          <button (click)="toggleDropdown('setting')"
+            class="w-full flex items-center justify-between px-3 py-2 rounded-md transition-all duration-200"
+            [ngClass]="themeService.isDarkMode() ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-blue-500/70 text-white'">
+            <span class="flex items-center gap-3">
+              <fa-icon [icon]="faStore" class="text-lg"></fa-icon>
+              <span *ngIf="isSidebarOpen()" class="text-sm font-medium">Setting</span>
+            </span>
+            <fa-icon *ngIf="isSidebarOpen()" [icon]="openDropdown() === 'setting' ? faChevronDown : faChevronRight"
+              class="text-xs"></fa-icon>
+          </button>
+          <div *ngIf="isSidebarOpen() && openDropdown() === 'setting'" class="ml-9 mt-1 space-y-1">
+            <a *ngFor="let link of [{ to: '/setting/theme', label: 'Theme' }, { to: '/setting/users', label: 'User' }]"
+              [routerLink]="link.to" (click)="handleLinkClick()" class="block text-sm rounded-md px-3 py-1.5 transition"
+              [ngClass]="themeService.isDarkMode() ? 'text-gray-200 hover:bg-gray-700' : 'text-white hover:bg-white/20'">
+              {{ link.label }}
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <button (click)="toggleDropdown('supplier')"
+            class="w-full flex items-center justify-between px-3 py-2 rounded-md transition-all duration-200"
+            [ngClass]="themeService.isDarkMode() ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-blue-500/70 text-white'">
+            <span class="flex items-center gap-3">
+              <fa-icon [icon]="faTruck" class="text-lg"></fa-icon>
+              <span *ngIf="isSidebarOpen()" class="text-sm font-medium">Supplier</span>
+            </span>
+            <fa-icon *ngIf="isSidebarOpen()" [icon]="openDropdown() === 'supplier' ? faChevronDown : faChevronRight"
+              class="text-xs"></fa-icon>
+          </button>
+          <div *ngIf="isSidebarOpen() && openDropdown() === 'supplier'" class="ml-9 mt-1 space-y-1">
+            <a *ngFor="let link of [{ to: '/supplier/info', label: 'Info' }, { to: '/supplier/tandc', label: 'T & C' }]"
+              [routerLink]="link.to" (click)="handleLinkClick()" class="block text-sm rounded-md px-3 py-1.5 transition"
+              [ngClass]="themeService.isDarkMode() ? 'text-gray-200 hover:bg-gray-700' : 'text-white hover:bg-white/20'">
+              {{ link.label }}
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <button (click)="toggleDropdown('payments')"
+            class="w-full flex items-center justify-between px-3 py-2 rounded-md transition-all duration-200"
+            [ngClass]="themeService.isDarkMode() ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-blue-500/70 text-white'">
+            <span class="flex items-center gap-3">
+              <fa-icon [icon]="faCreditCard" class="text-lg"></fa-icon>
+              <span *ngIf="isSidebarOpen()" class="text-sm font-medium">Payments</span>
+            </span>
+            <fa-icon *ngIf="isSidebarOpen()" [icon]="openDropdown() === 'payments' ? faChevronDown : faChevronRight"
+              class="text-xs"></fa-icon>
+          </button>
+          <div *ngIf="isSidebarOpen() && openDropdown() === 'payments'" class="ml-9 mt-1 space-y-1">
+            <a *ngFor="let link of [{ to: '/payment/add', label: 'Add' }, { to: '/payment/modify', label: 'Modify' }]"
+              [routerLink]="link.to" (click)="handleLinkClick()" class="block text-sm rounded-md px-3 py-1.5 transition"
+              [ngClass]="themeService.isDarkMode() ? 'text-gray-200 hover:bg-gray-700' : 'text-white hover:bg-white/20'">
+              {{ link.label }}
+            </a>
+          </div>
+        </div>
+
+        <div class="relative group">
+          <a routerLink="/customercare" (click)="handleLinkClick()"
+            class="flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200"
+            routerLinkActive="active-link"
+            [ngClass]="themeService.isDarkMode() ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-blue-500/70 text-white'">
+            <fa-icon [icon]="faHeadset" class="text-lg"></fa-icon>
+            <span *ngIf="isSidebarOpen()" class="text-sm font-medium">Customer Care</span>
+          </a>
+        </div>
+
+        <div class="relative group">
+          <a routerLink="/orders" (click)="handleLinkClick()"
+            class="flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200"
+            routerLinkActive="active-link"
+            [ngClass]="themeService.isDarkMode() ? 'hover:bg-gray-800 text-gray-200' : 'hover:bg-blue-500/70 text-white'">
+            <fa-icon [icon]="faCartPlus" class="text-lg"></fa-icon>
+            <span *ngIf="isSidebarOpen()" class="text-sm font-medium">Orders</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <div *ngIf="isSidebarOpen()" class="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden"
+      (click)="isSidebarOpen.set(false)"></div>
+
+    <main class="flex-1 h-[calc(100vh-4rem)] overflow-y-auto p-4 sm:p-6 md:p-8 transition-all duration-300"
+      [ngClass]="isSidebarOpen() ? 'md:ml-64' : 'md:ml-16'">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

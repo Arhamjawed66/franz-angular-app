@@ -1,0 +1,106 @@
+/* Modal Animation Styles */
+.fixed {
+  position: fixed;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.bg-opacity-75 {
+  background-color: rgba(107, 114, 128, 0.75);
+}
+
+.transition-opacity {
+  transition: opacity 150ms ease-in-out;
+}
+
+/* Table row hover effect enhancement */
+.table-row-hover:hover {
+  background-color: rgba(243, 244, 246, 0.5);
+}
+
+/* Focus ring improvements */
+input:focus, button:focus {
+  outline: none;
+}
+
+/* Smooth scrollbar for table container */
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 3px;
+}
+
+/* Dark mode scrollbar */
+.dark .overflow-x-auto::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+}
+
+/* Button transitions */
+button {
+  transition: all 150ms ease-in-out;
+}
+
+/* Input focus transition */
+input {
+  transition: border-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Staggered fade-in for table rows */
+tbody tr {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal entrance animation */
+.relative.transform {
+  animation: modalSlideIn 0.2s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

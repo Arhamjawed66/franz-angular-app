@@ -1,0 +1,83 @@
+<div class="p-6 max-w-3xl mx-auto space-y-6">
+
+  <!-- CREATE CATEGORY -->
+  <div class="bg-white dark:bg-gray-800 shadow p-4 rounded-lg">
+    <h2 class="text-xl font-bold mb-3">Create Category</h2>
+
+    <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+      <input
+        type="text"
+        [(ngModel)]="newCategoryName"
+        placeholder="Category name"
+        class="border rounded-lg px-3 py-2 w-full focus:ring"
+      />
+
+      <button
+        (click)="createCategory()"
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+        Add
+      </button>
+    </div>
+  </div>
+
+  <!-- CATEGORY LIST -->
+  <div class="bg-white dark:bg-gray-800 shadow p-4 rounded-lg">
+    <h2 class="text-xl font-bold mb-4">Categories</h2>
+
+    <ul class="space-y-4">
+      <li *ngFor="let c of categories()"
+          class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
+
+        <!-- Display mode -->
+        <div *ngIf="editModeId !== c.id" class="flex-1">
+          <span class="text-lg">{{ c.name }}</span>
+        </div>
+
+        <!-- Edit mode -->
+        <div *ngIf="editModeId === c.id" class="flex-1">
+          <input
+            type="text"
+            [(ngModel)]="editName"
+            class="border rounded-lg px-3 py-2 w-full focus:ring"
+          />
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="flex gap-2">
+          
+          <!-- Edit button -->
+          <button
+            *ngIf="editModeId !== c.id"
+            (click)="startEditing(c)"
+            class="px-3 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+            Edits
+          </button>
+
+          <!-- Save button -->
+          <button
+            *ngIf="editModeId === c.id"
+            (click)="updateCategory(c.id)"
+            class="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            Save
+          </button>
+
+          <!-- Cancel button -->
+          <button
+            *ngIf="editModeId === c.id"
+            (click)="cancelEdit()"
+            class="px-3 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">
+            Cancel
+          </button>
+
+          <!-- Delete button -->
+          <button
+            (click)="deleteCategory(c.id)"
+            class="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+            Delete
+          </button>
+
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

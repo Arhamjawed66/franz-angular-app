@@ -1,0 +1,129 @@
+<header
+  class="fixed top-0 left-0 w-full z-50 shadow-lg transition-all duration-300 backdrop-blur-md"
+  [ngClass]="(themeService.isDarkMode() ? 'bg-gradient-to-r from-gray-900/95 to-gray-800/95 text-white' : 'bg-gradient-to-r from-blue-600 to-blue-500 text-white')"
+>
+  <div class="flex items-center justify-between ml-4 md:ml-20 mr-4 md:mr-20 py-3">
+    <div class="flex items-center gap-3 md:gap-6">
+      <fa-icon [icon]="faBars" class="text-xl cursor-pointer hover:text-blue-300 transition" (click)="toggleSidebar.emit()"></fa-icon>
+      <a routerLink="/" class="font-bold text-lg md:text-xl tracking-wide hover:scale-105 transition-transform duration-200" [ngClass]="(themeService.isDarkMode() ? 'text-blue-300 hover:text-blue-200' : 'text-white hover:text-blue-100')">
+        Invent Plus
+      </a>
+      
+      <div class="hidden md:flex items-center relative">
+        <fa-icon [icon]="faSearch" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></fa-icon>
+        <input
+          type="text"
+          placeholder="Search..."
+          class="w-84 border rounded-full pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 transition-all duration-300"
+          [ngClass]="(themeService.isDarkMode() ? 'bg-gray-800 border-gray-700 text-white focus:ring-blue-400 placeholder-gray-400' : 'bg-gray-100 border-gray-300 text-gray-800 focus:ring-blue-300 placeholder-gray-500')"
+        />
+      </div>
+    </div>
+
+    <!-- Desktop Menu - Always visible on all screens -->
+    <div class="flex items-center gap-3 md:gap-6">
+      <a routerLink="/cart" class="flex items-center gap-2 px-2 md:px-3 py-2 rounded-lg hover:bg-white/10 hover:scale-105 transition-all duration-200 font-medium">
+        <fa-icon [icon]="faShoppingCart" class="text-lg"></fa-icon> 
+        <span class="hidden md:inline">Cart</span>
+      </a>
+
+      <div class="relative">
+        <button 
+          (click)="toggleAccount($event)"
+          class="flex items-center gap-2 bg-blue-600 text-white px-2 md:px-3 py-1 rounded-md hover:bg-blue-700 hover:shadow-lg transition-all duration-200 border border-blue-700"
+        >
+          <fa-icon [icon]="faUser"></fa-icon> 
+          <span class="hidden md:inline">Account</span>
+        </button>
+
+        <div
+          *ngIf="accountOpen()"
+          class="absolute right-0 mt-2 w-40 shadow-xl rounded-lg p-3 z-50 border"
+          [ngClass]="(themeService.isDarkMode() ? 'bg-gray-800/95 backdrop-blur-md text-white border-gray-700' : 'bg-white/95 backdrop-blur-md text-gray-800 border-gray-200')"
+        >
+          <ng-container *ngIf="!user">
+            <a routerLink="/login" (click)="accountOpen.set(false)" class="block py-1 px-2 rounded hover:bg-blue-500 hover:text-white transition">Login</a>
+            <a routerLink="/register" (click)="accountOpen.set(false)" class="block py-1 px-2 rounded hover:bg-blue-500 hover:text-white transition">Signup</a>
+          </ng-container>
+
+          <div *ngIf="user" class="space-y-2">
+            <p class="text-xs font-bold border-b pb-1 truncate">{{ user.email }}</p>
+            <button
+              (click)="logout()"
+              class="flex items-center gap-2 w-full py-1 px-2 rounded hover:bg-red-500 hover:text-white transition text-left"
+            >
+              <fa-icon [icon]="faSignOutAlt"></fa-icon> Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button (click)="themeService.toggleTheme()" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+        <fa-icon [icon]="themeService.isDarkMode() ? faSun : faMoon"></fa-icon>
+      </button>
+
+      <!-- Mobile Menu Button -->
+      <button 
+        (click)="toggleMobileMenu($event)"
+        class="md:hidden p-2 rounded-full hover:bg-white/10 transition"
+      >
+        <fa-icon [icon]="mobileMenuOpen() ? faTimes : faEllipsisVertical" class="text-lg"></fa-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Dropdown -->
+  <div 
+    *ngIf="mobileMenuOpen()"
+    class="md:hidden absolute top-full left-0 w-full shadow-lg py-4 border-t"
+    [ngClass]="(themeService.isDarkMode() ? 'bg-gray-800/95 backdrop-blur-md text-white border-gray-700' : 'bg-white/95 backdrop-blur-md text-gray-800 border-gray-200')"
+  >
+    <!-- Mobile Search -->
+    <div class="flex items-center relative mx-4 mb-4">
+      <fa-icon [icon]="faSearch" class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></fa-icon>
+      <input
+        type="text"
+        placeholder="Search..."
+        class="w-full border rounded-full pl-8 pr-3 py-2 text-sm focus:outline-none focus:ring-2 transition-all duration-300"
+        [ngClass]="(themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white focus:ring-blue-400 placeholder-gray-400' : 'bg-gray-100 border-gray-300 text-gray-800 focus:ring-blue-300 placeholder-gray-500')"
+      />
+    </div>
+
+    <!-- Mobile Cart Link -->
+    <a routerLink="/cart" (click)="mobileMenuOpen.set(false)" class="flex items-center gap-3 px-4 py-3 hover:bg-blue-500 hover:text-white transition">
+      <fa-icon [icon]="faShoppingCart" class="text-lg"></fa-icon>
+      <span class="font-medium">Cart</span>
+    </a>
+
+    <!-- Mobile Account Section -->
+    <div class="px-4 py-2">
+      <button 
+        (click)="toggleAccount($event)"
+        class="flex items-center justify-between w-full py-2 hover:text-blue-400 transition"
+      >
+        <span class="flex items-center gap-3 font-medium">
+          <fa-icon [icon]="faUser"></fa-icon>
+          Account
+        </span>
+        <fa-icon [icon]="accountOpen() ? faChevronDown : faChevronRight" class="text-sm"></fa-icon>
+      </button>
+
+      <!-- Mobile Account Dropdown -->
+      <div *ngIf="accountOpen()" class="ml-6 mt-2 space-y-2">
+        <ng-container *ngIf="!user">
+          <a routerLink="/login" (click)="accountOpen.set(false); mobileMenuOpen.set(false)" class="block py-2 px-3 rounded hover:bg-blue-500 hover:text-white transition">Login</a>
+          <a routerLink="/register" (click)="accountOpen.set(false); mobileMenuOpen.set(false)" class="block py-2 px-3 rounded hover:bg-blue-500 hover:text-white transition">Signup</a>
+        </ng-container>
+        <div *ngIf="user" class="space-y-2">
+          <p class="text-xs font-bold border-b pb-2 truncate">{{ user.email }}</p>
+          <button
+            (click)="logout()"
+            class="flex items-center gap-2 w-full py-2 px-3 rounded hover:bg-red-500 hover:text-white transition text-left"
+          >
+            <fa-icon [icon]="faSignOutAlt"></fa-icon> Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

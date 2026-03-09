@@ -1,0 +1,357 @@
+/* Custom styles for InventoryComponent */
+
+/* ============================================
+   PULSE ANIMATION FOR STATUS INDICATOR
+   ============================================ */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+/* Ensure smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom scrollbar for webkit browsers */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 8px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Dark mode scrollbar */
+.dark .overflow-x-auto::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.dark .overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #6b7280;
+}
+
+.dark .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ============================================
+   MODAL STYLES
+   ============================================ */
+
+/* Modal backdrop blur effect */
+.fixed.inset-0 {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Animation for modal appearance */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.bg-white.dark\:bg-gray-800.rounded-2xl {
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+/* ============================================
+   FORM STYLES
+   ============================================ */
+
+/* Custom focus styles */
+input:focus, 
+select:focus, 
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ============================================
+   TABLE STYLES
+   ============================================ */
+
+/* Table row transitions */
+tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+/* Zebra striping */
+tbody tr:nth-child(even) {
+  background-color: rgba(248, 250, 252, 0.5);
+}
+
+.dark tbody tr:nth-child(even) {
+  background-color: rgba(55, 65, 81, 0.3);
+}
+
+/* Table hover */
+tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+.dark tbody tr:hover {
+  background-color: #374151;
+}
+
+/* ============================================
+   BUTTON STYLES
+   ============================================ */
+
+/* Button hover effects */
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* Disabled button state */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ============================================
+   CARD STYLES
+   ============================================ */
+
+/* Card hover effects */
+.bg-white.dark\:bg-gray-800.rounded-xl {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.bg-white.dark\:bg-gray-800.rounded-xl:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================
+   IMAGE STYLES
+   ============================================ */
+
+/* Ensure images load properly */
+img {
+  transition: transform 0.2s ease;
+}
+
+img:hover {
+  transform: scale(1.05);
+}
+
+/* ============================================
+   RESPONSIVE IMPROVEMENTS
+   ============================================ */
+
+@media (max-width: 640px) {
+  .grid-cols-1\.sm\:grid-cols-2\.lg\:grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  .p-6 {
+    padding: 1rem;
+  }
+  
+  /* Stack flex items on mobile */
+  .flex-col.sm\:flex-row {
+    flex-direction: column;
+  }
+  
+  /* Full width inputs on mobile */
+  .max-w-md {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-cols-1\.sm\:grid-cols-2\.lg\:grid-cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Improve accessibility */
+button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* ============================================
+   STOCK STATUS BADGES
+   ============================================ */
+
+/* In Stock - Green */
+.bg-green-100 {
+  background-color: #dcfce7;
+}
+
+.text-green-700 {
+  color: #15803d;
+}
+
+.dark .dark\:bg-green-900\/30 {
+  background-color: rgba(22, 101, 52, 0.3);
+}
+
+.dark .dark\:text-green-400 {
+  color: #4ade80;
+}
+
+/* Low Stock - Orange */
+.bg-orange-100 {
+  background-color: #ffedd5;
+}
+
+.text-orange-700 {
+  color: #c2410c;
+}
+
+.dark .dark\:bg-orange-900\/30 {
+  background-color: rgba(180, 83, 9, 0.3);
+}
+
+.dark .dark\:text-orange-400 {
+  color: #fb923c;
+}
+
+/* Out of Stock - Red */
+.bg-red-100 {
+  background-color: #fee2e2;
+}
+
+.text-red-700 {
+  color: #b91c1c;
+}
+
+.dark .dark\:bg-red-900\/30 {
+  background-color: rgba(153, 27, 27, 0.3);
+}
+
+.dark .dark\:text-red-400 {
+  color: #f87171;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .fixed.inset-0 {
+    display: none !important;
+  }
+  
+  .bg-gray-50 {
+    background: white !important;
+    color: black !important;
+  }
+  
+  button {
+    display: none !important;
+  }
+  
+  .shadow-sm,
+  .shadow-md {
+    box-shadow: none !important;
+  }
+}
+
+/* ============================================
+   ADDITIONAL UTILITIES
+   ============================================ */
+
+/* Sticky positioning helper */
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Empty state styling */
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+/* Status dot pulse animation for online */
+.status-online {
+  position: relative;
+}
+
+.status-online::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-color: #22c55e;
+  animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Status dot pulse animation for offline */
+.status-offline {
+  position: relative;
+}
+
+.status-offline::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-color: #ef4444;
+  animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

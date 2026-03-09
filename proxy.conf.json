@@ -1,0 +1,7 @@
+{
+  "/sb-inventory-service": {
+    "target": "http://72.60.104.250:8080",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

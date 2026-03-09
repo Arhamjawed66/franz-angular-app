@@ -1,0 +1,116 @@
+<div
+  class="min-h-screen flex flex-col items-center justify-center p-2 transition-all duration-500"
+  [ngClass]="themeService.isDarkMode() ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-800'"
+>
+  <div
+    class="w-full max-w-3xl border shadow-md rounded-2xl p-8 transition-all duration-300"
+    [ngClass]="themeService.isDarkMode() ? 'bg-gray-800 border-gray-700' : 'bg-blue-50 border-blue-200'"
+  >
+    <h1
+      class="text-3xl font-bold text-center mb-8"
+      [ngClass]="themeService.isDarkMode() ? 'text-blue-400' : 'text-blue-600'"
+    >
+      Update Store
+    </h1>
+
+    <form (ngSubmit)="handleSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label
+          class="block text-sm font-medium mb-2"
+          [ngClass]="themeService.isDarkMode() ? 'text-blue-300' : 'text-blue-700'"
+        >
+          Store Name
+        </label>
+        <input
+          type="text"
+          name="name"
+          [(ngModel)]="formData.name"
+          placeholder="Enter store name"
+          class="w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-blue-300 text-gray-800'"
+          required
+        />
+      </div>
+
+      <div>
+        <label
+          class="block text-sm font-medium mb-2"
+          [ngClass]="themeService.isDarkMode() ? 'text-blue-300' : 'text-blue-700'"
+        >
+          Owner Name
+        </label>
+        <input
+          type="text"
+          name="owner"
+          [(ngModel)]="formData.owner"
+          placeholder="Enter owner name"
+          class="w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-blue-300 text-gray-800'"
+          required
+        />
+      </div>
+
+      <div>
+        <label
+          class="block text-sm font-medium mb-2"
+          [ngClass]="themeService.isDarkMode() ? 'text-blue-300' : 'text-blue-700'"
+        >
+          Email Address
+        </label>
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="formData.email"
+          placeholder="example@email.com"
+          class="w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-blue-300 text-gray-800'"
+          required
+        />
+      </div>
+
+      <div>
+        <label
+          class="block text-sm font-medium mb-2"
+          [ngClass]="themeService.isDarkMode() ? 'text-blue-300' : 'text-blue-700'"
+        >
+          Phone Number
+        </label>
+        <input
+          type="text"
+          name="phone"
+          [(ngModel)]="formData.phone"
+          placeholder="+92 300 1234567"
+          class="w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-blue-300 text-gray-800'"
+          required
+        />
+      </div>
+
+      <div class="md:col-span-2">
+        <label
+          class="block text-sm font-medium mb-2"
+          [ngClass]="themeService.isDarkMode() ? 'text-blue-300' : 'text-blue-700'"
+        >
+          Address
+        </label>
+        <textarea
+          name="address"
+          [(ngModel)]="formData.address"
+          placeholder="Enter store address"
+          rows="3"
+          class="w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-blue-300 text-gray-800'"
+        ></textarea>
+      </div>
+
+      <div class="md:col-span-2 flex justify-center mt-6">
+        <button
+          type="submit"
+          class="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-sm"
+        >
+          Update Store
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

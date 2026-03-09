@@ -1,0 +1,103 @@
+<section
+  class="min-h-screen flex items-center justify-center transition-all duration-300"
+  [ngClass]="themeService.isDarkMode() ? 'bg-gray-900' : 'bg-gray-50'"
+>
+  <div
+    class="w-full max-w-md rounded-xl shadow-lg border transition-all duration-300 relative"
+    [ngClass]="themeService.isDarkMode() ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'"
+  >
+    <div class="flex flex-col items-center mt-6 relative z-10">
+      <img
+        src="https://media.istockphoto.com/id/2184187248/photo/abstract-three-pins-isolated-marker-locate-pin-tourist-joutney-transportation-delivery.jpg?s=1024x1024&w=is&k=20&c=w5fTv749qjq_W1GZ_E_-URNWrzCa7RcNqeZk1Ce_EqI="
+        alt="Invent Plus Logo"
+        class="w-24 h-24 mb-2 rounded-full object-cover"
+      />
+      <h1
+        class="text-2xl font-bold transition-colors duration-300"
+        [ngClass]="themeService.isDarkMode() ? 'text-blue-400' : 'text-blue-600'"
+      >
+        Invent Plus
+      </h1>
+    </div>
+    <div class="p-6 sm:p-8 relative z-10">
+      <h2
+        class="text-xl font-bold text-center md:text-2xl transition-colors duration-300"
+        [ngClass]="themeService.isDarkMode() ? 'text-white' : 'text-gray-900'"
+      >
+        Login to your account
+      </h2>
+      <p *ngIf="error" class="text-red-500 text-sm text-center mt-2">{{ error }}</p>
+
+      <!-- Popup Modal -->
+      <div *ngIf="showPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-sm w-full mx-4">
+          <div class="flex items-center mb-4">
+            <fa-icon [icon]="faExclamationTriangle" class="text-red-500 text-2xl mr-3"></fa-icon>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Invalid User</h3>
+          </div>
+          <p class="text-gray-700 dark:text-gray-300 mb-4">{{ popupMessage }}</p>
+          <button (click)="closePopup()" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-all">
+            OK
+          </button>
+        </div>
+      </div>
+      <form class="mt-6 space-y-5" (ngSubmit)="handleSubmit()">
+        <div>
+          <label for="username" class="block mb-2 text-sm font-medium" [ngClass]="themeService.isDarkMode() ? 'text-gray-300' : 'text-gray-700'">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            [(ngModel)]="username"
+            placeholder="grow@franzsns.com"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-gray-50 border-gray-300 text-gray-900'"
+            required
+          />
+        </div>
+        <div>
+          <label for="role" class="block mb-2 text-sm font-medium" [ngClass]="themeService.isDarkMode() ? 'text-gray-300' : 'text-gray-700'">Role</label>
+          <select
+            id="role"
+            name="role"
+            [(ngModel)]="role"
+            (change)="onRoleChange()"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-300 text-gray-900'"
+            required
+          >
+            <option value="admin">Admin</option>
+            <option value="store">Store</option>
+            <option value="supply">Supply</option>
+          </select>
+        </div>
+        <div class="relative">
+          <label for="password" class="block mb-2 text-sm font-medium" [ngClass]="themeService.isDarkMode() ? 'text-gray-300' : 'text-gray-700'">Password</label>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="••••••••"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            [ngClass]="themeService.isDarkMode() ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-gray-50 border-gray-300 text-gray-900'"
+            required
+          />
+          <button type="button" (click)="showPassword = !showPassword" class="absolute right-3 top-13 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+            <fa-icon [icon]="showPassword ? faEyeSlash : faEye"></fa-icon>
+          </button>
+        </div>
+        <button type="submit" class="w-full py-3 px-5 text-white bg-blue-600 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-all">
+          Login
+        </button>
+        <div class="text-sm text-center mt-3 font-medium" [ngClass]="themeService.isDarkMode() ? 'text-gray-300' : 'text-gray-700'">
+          <p>Warning: <span class="text-blue-500">Do not sell or share your login detail</span></p>
+        </div>
+        <p class="text-sm text-center mt-4" [ngClass]="themeService.isDarkMode() ? 'text-gray-400' : 'text-gray-600'">
+          Dont have an account yet?
+          <a routerLink="/register" class="font-medium text-blue-600 hover:underline">Sign up</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</section>
