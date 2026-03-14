@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, catchError, of } from 'rxjs';
+import { Observable, catchError, of } from 'rxjs';
 import { InventoryDTO } from '../dto/inventoryDTO';
 import { environment } from '../../environments/environment';
 
