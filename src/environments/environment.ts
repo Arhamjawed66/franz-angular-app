@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-	apiUrl: 'http://localhost:8080/sb-inventory-service/api/v1'
-}
+    apiUrl: '/sb-inventory-service/api/v1' // <--- Sirf itna likhein
+};
