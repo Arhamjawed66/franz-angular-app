@@ -12,7 +12,6 @@ import { ViewCategoryComponent } from './pages/category/view-category/view-categ
 import { InventoryComponent } from './pages/inventory/inventory/inventory';
 import { ThemeComponent } from './pages/setting/theme/theme';
 import { InfoComponent } from './pages/supplier/info/info';
-import { TandCComponent } from './pages/supplier/tand-c/tand-c';
 import { AddComponent } from './pages/payment/add/add';
 import { ModifyComponent } from './pages/payment/modify/modify';
 import { CustomerCareComponent } from './pages/customer_care/customer-care/customer-care';
@@ -65,7 +64,6 @@ export const routes: Routes = [
       // Supplier Details
       { path: 'supplier', children: [
         { path: 'info', component: InfoComponent },
-        { path: 'tandc', component: TandCComponent },
       ]},
       
       // Payments

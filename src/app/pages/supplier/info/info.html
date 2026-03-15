@@ -1,3 +1,101 @@
-<div>
-  <h1>info pages</h1>
+<div class="min-h-screen p-6 transition-all duration-500"
+     [ngClass]="themeService.isDarkMode() ? 'bg-slate-900 text-white' : 'bg-gray-50 text-slate-900'">
+
+  <div class="max-w-4xl mx-auto">
+    <div class="flex items-center gap-4 mb-8">
+      <button routerLink="/suppliers" class="p-2 hover:bg-gray-200 dark:hover:bg-slate-800 rounded-full transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+      </button>
+      <h1 class="text-2xl font-bold">Supplier Profile</h1>
+    </div>
+
+    <div *ngIf="isLoading()" class="flex justify-center py-20">
+      <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-indigo-500"></div>
+    </div>
+
+    <div *ngIf="!isLoading() && supplier()" class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      
+      <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-slate-700">
+        <div class="flex flex-col md:flex-row justify-between gap-6">
+          <div>
+            <span class="bg-indigo-100 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+              ID: #{{ supplier()?.supplier_id }}
+            </span>
+            <h2 class="text-4xl font-black mt-2 text-slate-800 dark:text-white">{{ supplier()?.name }}</h2>
+            <p class="text-slate-500 mt-1 flex items-center gap-2">
+              <span class="w-2 h-2 bg-green-500 rounded-full"></span> Active Partner
+            </p>
+          </div>
+          
+          <div class="flex gap-2">
+            <button class="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-indigo-700 transition">
+              Edit Profile
+            </button>
+          </div>
+        </div>
+
+        <hr class="my-8 border-gray-100 dark:border-slate-700">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="space-y-4">
+            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">Contact Person</h3>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center text-indigo-600 font-bold text-xl">
+                {{ supplier()?.contact_person_name?.charAt(0) }}
+              </div>
+              <div>
+                <p class="font-bold text-lg">{{ supplier()?.contact_person_name }}</p>
+                <p class="text-sm text-gray-500">Primary Representative</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-2xl border border-gray-100 dark:border-slate-700">
+              <p class="text-xs text-gray-400 font-bold mb-1 uppercase">Store ID</p>
+              <p class="text-xl font-black text-indigo-600">{{ supplier()?.store_id }}</p>
+            </div>
+            <div class="p-4 bg-gray-50 dark:bg-slate-900/50 rounded-2xl border border-gray-100 dark:border-slate-700">
+              <p class="text-xs text-gray-400 font-bold mb-1 uppercase">Address ID</p>
+              <p class="text-xl font-black text-indigo-600">{{ supplier()?.address_id }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-gray-100 dark:border-slate-700 flex items-center gap-4">
+          <div class="p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-2xl">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 font-bold uppercase">Email Address</p>
+            <p class="font-bold">{{ supplier()?.contact_person_email }}</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-gray-100 dark:border-slate-700 flex items-center gap-4">
+          <div class="p-4 bg-green-50 dark:bg-green-900/20 text-green-600 rounded-2xl">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 font-bold uppercase">Phone Number</p>
+            <p class="font-bold">{{ supplier()?.contact_person_phone }}</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div *ngIf="!isLoading() && !supplier()" class="text-center py-20">
+      <p class="text-gray-500 text-lg">Supplier details not found.</p>
+      <button routerLink="/suppliers" class="mt-4 text-indigo-600 font-bold underline">Go Back to List</button>
+    </div>
+  </div>
 </div>

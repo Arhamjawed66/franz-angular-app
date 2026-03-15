@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, of } from 'rxjs';
+import { environment } from '../../environments/environment'; // environment file import karein
 
 export interface Supplier {
   supplier_id?: number;
@@ -17,16 +18,22 @@ export interface Supplier {
 })
 export class SupplierService {
   private http = inject(HttpClient);
-  private apiUrl = '/sb-inventory-service/api/v1/supplier';
+  // Behtar ye hai ke base URL environment se aaye
+  private apiUrl = `${environment.apiUrl}/supplier`; 
 
   // Get all suppliers
   getSuppliers(): Observable<Supplier[]> {
-    return this.http.get<Supplier[]>(`${this.apiUrl}`);
+    return this.http.get<Supplier[]>(this.apiUrl).pipe(
+      catchError(error => {
+        console.error('Error fetching suppliers:', error);
+        return of([]); // Error par khali array bhej dega taake app crash na ho
+      })
+    );
   }
 
   // Add new supplier
   addSupplier(data: Supplier): Observable<Supplier> {
-    return this.http.post<Supplier>(`${this.apiUrl}`, data);
+    return this.http.post<Supplier>(this.apiUrl, data);
   }
 
   // Update supplier
