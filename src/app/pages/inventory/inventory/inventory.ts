@@ -81,7 +81,7 @@ export class InventoryComponent implements OnInit {
   // Category Options for Filter Dropdown
   categoryOptions = ['All', 'Electronics', 'Clothing', 'Food', 'Books', 'Home & Garden'];
 
-  // ⭐ COMPUTED SIGNAL: Auto filter and sort - tracks all dependencies
+  // ⭐ COMPUTED SIGNAL: Auto search filter and sort - tracks all dependencies
   filteredItems = computed(() => {
     let items = [...this.inventoryItems()];
 
