@@ -5,7 +5,10 @@ import { ThemeService } from '../../../services/theme.service';
 import { InventoryService } from '../../../services/inventory.service';
 import { CategoryDTO } from '../../../dto/categoryDTO';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faCartPlus, faBox, faDollarSign, faExclamationTriangle, faPlus, faSearch, faFilter, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faCartPlus, faBox, faDollarSign, faExclamationTriangle, 
+  faPlus, faSearch, faFilter, faEdit, faTrash 
+} from '@fortawesome/free-solid-svg-icons';
 import { InventoryDTO } from '../../../dto/inventoryDTO';
 
 @Component({
@@ -38,97 +41,62 @@ export class InventoryComponent implements OnInit {
   inventoryItems = signal<InventoryDTO[]>([]);
   categories = signal<CategoryDTO[]>([]);
 
-  // Filter & Sort Signals - Using signals with getter/setter for ngModel
-  private _searchTerm = signal<string>('');
-  private _selectedCategory = signal<string>('All');
-  
-  get searchTerm(): string {
-    return this._searchTerm();
-  }
-  
-  set searchTerm(value: string) {
-    this._searchTerm.set(value);
-  }
-  
-  get selectedCategory(): string {
-    return this._selectedCategory();
-  }
-  
-  set selectedCategory(value: string) {
-    this._selectedCategory.set(value);
-  }
-  
+  // Filter & Sort Signals
+  searchTerm = signal<string>('');
+  selectedCategory = signal<string>('All');
   sortBy = signal<string>('name');
   sortOrder = signal<'asc' | 'desc'>('asc');
 
-  // Modal & Form - Using regular object for form binding
+  // Modal & Form Signals
   showAddModal = signal<boolean>(false);
   showEditModal = signal<boolean>(false);
   editingItem = signal<InventoryDTO | null>(null);
   
-  // Form model object for ngModel binding
+  // Form model for ngModel binding
   formModel: Partial<InventoryDTO> = {
     name: '',
     description: '',
-    //price: 0,
-    //stock: 0,
-    //imageUrl: '',
-    //barcode: '',
-    //expiry_date: '',
-    store_id: 0
+    store_id: 0,
+    stock_quantity: 0,
+    min_stock_level: 5,
+    batch_no: ''
   };
 
-  // Category Options for Filter Dropdown
   categoryOptions = ['All', 'Electronics', 'Clothing', 'Food', 'Books', 'Home & Garden'];
 
-  // ⭐ COMPUTED SIGNAL: Auto search filter and sort - tracks all dependencies
+  // ⭐ COMPUTED: Filtered List
   filteredItems = computed(() => {
-    let items = [...this.inventoryItems()];
+    const items = this.inventoryItems() || [];
+    const search = this.searchTerm().toLowerCase();
+    const category = this.selectedCategory().toLowerCase();
 
-    // 1. Filter by search (tracks _searchTerm signal)
-    const search = this._searchTerm();
-    if (search) {
-      const term = search.toLowerCase();
-      items = items.filter(item => 
-        item.name.toLowerCase().includes(term) || 
-        item.description.toLowerCase().includes(term)
-      );
-    }
-
-    // 2. Filter by category (tracks _selectedCategory signal)
-    const category = this._selectedCategory();
-    if (category !== 'All') {
-      const cat = category.toLowerCase();
-      items = items.filter(item => item.name.toLowerCase().includes(cat));
-    }
-
-    // 3. Sort (tracks sortBy and sortOrder signals)
-    return items.sort((a, b) => {
-      let aVal = (a as any)[this.sortBy()];
-      let bVal = (b as any)[this.sortBy()];
-      
-      if (typeof aVal === 'string') {
-        aVal = aVal.toLowerCase();
-        bVal = bVal.toLowerCase();
-      }
-
-      const res = aVal > bVal ? 1 : -1;
-      return this.sortOrder() === 'asc' ? res : -res;
-    });
+    return items
+      .filter(item => {
+        const name = (item.name || '').toLowerCase();
+        const desc = (item.description || '').toLowerCase();
+        const matchesSearch = name.includes(search) || desc.includes(search);
+        const matchesCategory = category === 'all' || name.includes(category);
+        return matchesSearch && matchesCategory;
+      })
+      .sort((a, b) => {
+        let aVal = (a as any)[this.sortBy()] ?? '';
+        let bVal = (b as any)[this.sortBy()] ?? '';
+        const res = aVal > bVal ? 1 : -1;
+        return this.sortOrder() === 'asc' ? res : -res;
+      });
   });
 
-  // Stats (Computed for efficiency)
-  //totalValue = computed(() => this.inventoryItems().reduce((t, i) => t + ((i.price ?? 0) * (i.stock ?? 0)), 0));
-  //lowStockCount = computed(() => this.inventoryItems().filter(i => (i.stock ?? 0) < 20).length);
+  // ⭐ COMPUTED: Stats
+  lowStockCount = computed(() => 
+    this.inventoryItems().filter(i => (i.stock_quantity ?? 0) <= (i.min_stock_level ?? 10)).length
+  );
 
   ngOnInit() {
     this.loadData();
     this.checkServerStatus();
   }
 
-  // Check server status
   checkServerStatus() {
-    // Simulate server status check - in real app, ping the API
     this.inventoryService.getStatus().subscribe({
       next: () => this.isServerOnline.set(true),
       error: () => this.isServerOnline.set(false)
@@ -137,7 +105,10 @@ export class InventoryComponent implements OnInit {
 
   loadData() {
     this.inventoryService.getInventory().subscribe({
-      next: (data) => this.inventoryItems.set(data),
+      next: (data) => {
+        console.log('Data loaded successfully:', data);
+        this.inventoryItems.set(data);
+      },
       error: (err) => {
         console.error('Error fetching data:', err);
         this.isServerOnline.set(false);
@@ -152,72 +123,55 @@ export class InventoryComponent implements OnInit {
   }
 
   addItem() {
-    // Create product with ID
-    const itemWithId: InventoryDTO = {
-      id: Date.now(),
-      name: this.formModel.name || '',
-      description: this.formModel.description || '',
-      //price: this.formModel.price || 0,
-      //stock: this.formModel.stock || 0,
-      //imageUrl: this.formModel.imageUrl || '',
-      store_id: this.formModel.store_id || 0,
-      //barcode: this.formModel.barcode || '',
-      inventory_received_date: this.formModel.inventory_received_date || ''
+    const newItem: InventoryDTO = {
+      ...this.formModel as InventoryDTO,
+      inventory_received_date: new Date().toISOString().split('T')[0]
     };
     
-    this.inventoryItems.update(prev => [...prev, itemWithId]);
-    this.closeAddModal();
+    this.inventoryService.addInventory(newItem).subscribe({
+      next: (res) => {
+        this.inventoryItems.update(prev => [...prev, res]);
+        this.closeAddModal();
+      },
+      error: (err) => console.error('Add failed:', err)
+    });
   }
 
   updateItem() {
-    if (this.editingItem()) {
-      const updatedItem: InventoryDTO = {
-        ...this.editingItem()!,
-        name: this.formModel.name || '',
-        description: this.formModel.description || '',
-        //price: this.formModel.price || 0,
-        //stock: this.formModel.stock || 0,
-        //imageUrl: this.formModel.imageUrl || '',
-        store_id: this.formModel.store_id || 0,
-        //barcode: this.formModel.barcode || '',
-        //expiry_date: this.formModel.expiry_date || ''
-      };
-      
-      this.inventoryItems.update(items => 
-        items.map(i => i.id === this.editingItem()?.id ? updatedItem : i)
-      );
-      this.closeEditModal();
+    const item = this.editingItem();
+    if (item && item.id) {
+      const updatedData = { ...item, ...this.formModel };
+      this.inventoryService.updateInventory(item.id, updatedData as InventoryDTO).subscribe({
+        next: (res) => {
+          this.inventoryItems.update(items => 
+            items.map(i => i.id === res.id ? res : i)
+          );
+          this.closeEditModal();
+        }
+      });
     }
   }
 
   deleteItem(item: InventoryDTO) {
-    if (confirm(`Are you sure you want to delete ${item.name}?`)) {
-      this.inventoryItems.update(items => items.filter(i => i.id !== item.id));
+    const id = item.id || item.product_id;
+    if (id && confirm(`Delete ${item.name}?`)) {
+      this.inventoryService.deleteInventory(id).subscribe({
+        next: () => {
+          this.inventoryItems.update(items => items.filter(i => (i.id || i.product_id) !== id));
+        }
+      });
     }
   }
 
-  // Get stock status for badge
   getStockStatus(stock: number): { label: string; class: string } {
-    if (stock === 0) {
-      return { label: 'Out of Stock', class: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' };
-    } else if (stock < 20) {
-      return { label: 'Low Stock', class: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' };
-    } else {
-      return { label: 'In Stock', class: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' };
-    }
+    if (stock <= 0) return { label: 'Out of Stock', class: 'bg-red-100 text-red-700 dark:bg-red-900/30' };
+    if (stock < 20) return { label: 'Low Stock', class: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30' };
+    return { label: 'In Stock', class: 'bg-green-100 text-green-700 dark:bg-green-900/30' };
   }
 
   // --- Modal Helpers ---
   openAddModal() {
-    this.formModel = {
-      name: '',
-      description: '',
-      //price: 0,
-      //stock: 0,
-      //imageUrl: '',
-      //barcode: '',
-      //expiry_date: ''
-    };
+    this.resetForm();
     this.showAddModal.set(true);
   }
 
@@ -234,5 +188,9 @@ export class InventoryComponent implements OnInit {
   closeEditModal() {
     this.showEditModal.set(false);
     this.editingItem.set(null);
+  }
+
+  private resetForm() {
+    this.formModel = { name: '', description: '', store_id: 0, stock_quantity: 0, batch_no: '' };
   }
 }

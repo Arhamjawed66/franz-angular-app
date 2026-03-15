@@ -1,9 +1,9 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, signal, inject, OnInit } from '@angular/core'; // ✅ Sahi
+import { CommonModule } from '@angular/common'; // CommonModule yahan se hi aayega
 import { FormsModule } from '@angular/forms';
 import { ProductDTO } from '../../../dto/productDTO';
 import { ProductService } from '../../../services/product.service';
-
+import { ThemeService } from '../../../services/theme.service';
 
 @Component({
   selector: 'app-product',
@@ -13,37 +13,37 @@ import { ProductService } from '../../../services/product.service';
 })
 export class ProductComponent implements OnInit {
   private productService = inject(ProductService);
+  public themeService = inject(ThemeService);
   
-  // Products from backend
+  // Data Signals
   products = signal<ProductDTO[]>([]);
-  
-  // Loading state
   isLoading = signal<boolean>(true);
   
-  // Error state
-  error = signal<string | null>(null);
-
-  // Form visibility flags
-  showAddProductForm = false;
-  showGetById = false;
+  // Form/Search UI Signals
+  showAddForm = signal<boolean>(false);
+  showSearchById = signal<boolean>(false);
   
-  // New product form
-  newProduct: ProductDTO = {
+  // Search logic
+  searchId = signal<number | null>(null);
+  foundProduct = signal<ProductDTO | null>(null);
+
+  // New Product Model (Based on your DTO)
+  newProduct = signal<ProductDTO>({
     name: '',
     description: '',
     price: 0,
+    cost_price: 0,
     stock: 0,
+    sku: '',
     barcode: '',
-    expiry_date: '',
-    imageUrl: '',
+    tax_rate: 0,
+    tax_type: 'VAT',
     store_id: 1,
-    category_id: 1
-  };
-  
-  // Search by ID
-  searchId: number | null = null;
-  foundProduct: ProductDTO | null = null;
-  searchError: string | null = null;
+    category_id: 1,
+    is_perishable: false,
+    is_visible_in_mobile_app: true,
+    imageUrl: ''
+  });
 
   ngOnInit() {
     this.loadProducts();
@@ -51,97 +51,47 @@ export class ProductComponent implements OnInit {
 
   loadProducts() {
     this.isLoading.set(true);
-    this.error.set(null);
-    
     this.productService.getProducts().subscribe({
       next: (data) => {
         this.products.set(data);
         this.isLoading.set(false);
       },
-      error: (err) => {
-        console.error('Error fetching products:', err);
-        this.error.set('Failed to load products. Please try again later.');
-        this.isLoading.set(false);
-      }
+      error: () => this.isLoading.set(false)
     });
   }
 
-  // Add new product
   addProduct() {
-    this.productService.addProduct(this.newProduct).subscribe({
-      next: (addedProduct) => {
-        this.products.update(products => [...products, addedProduct]);
-        this.showAddProductForm = false;
-        // Reset form
-        this.newProduct = {
-          name: '',
-          description: '',
-          price: 0,
-          stock: 0,
-          barcode: '',
-          expiry_date: '',
-          imageUrl: '',
-          store_id: 1,
-          category_id: 1
-        };
-        alert('Product added successfully!');
-      },
-      error: (err) => {
-        console.error('Error adding product:', err);
-        alert('Failed to add product. Please try again.');
+    this.productService.addProduct(this.newProduct()).subscribe({
+      next: (res) => {
+        this.products.update(prev => [res, ...prev]);
+        this.showAddForm.set(false);
+        this.resetForm();
       }
     });
   }
 
-  // Get product by ID
   getProductById() {
-    if (!this.searchId) {
-      this.searchError = 'Please enter a product ID';
-      this.foundProduct = null;
-      return;
-    }
-    
-    this.searchError = null;
-    this.foundProduct = null;
-    
-    this.productService.getProductById(this.searchId).subscribe({
-      next: (product) => {
-        this.foundProduct = product;
-      },
-      error: (err) => {
-        console.error('Error fetching product:', err);
-        this.searchError = 'Product not found with ID: ' + this.searchId;
-      }
+    if (!this.searchId()) return;
+    this.productService.getProductById(this.searchId()!).subscribe({
+      next: (p) => this.foundProduct.set(p),
+      error: () => alert('Product not found!')
     });
   }
 
-  // Delete product
-  deleteProduct(id: number) {
-    if (!confirm('Are you sure you want to delete this product?')) {
-      return;
+  deleteProduct(id: number | undefined) {
+    if (id && confirm('Are you sure?')) {
+      this.productService.deleteProduct(id).subscribe({
+        next: () => this.products.update(list => list.filter(p => p.id !== id))
+      });
     }
-    
-    this.productService.deleteProduct(id).subscribe({
-      next: () => {
-        this.products.update(products => products.filter(p => p.id !== id));
-        alert('Product deleted successfully!');
-      },
-      error: (err) => {
-        console.error('Error deleting product:', err);
-        alert('Failed to delete product. Please try again.');
-      }
-    });
   }
 
-  // Add to Cart simulation
-  addToCart(product: ProductDTO) {
-    const currentStock = product.stock ?? 0;
-    if (currentStock > 0) {
-      product.stock = currentStock - 1;
-      alert(`${product.name} added to cart!`);
-    } else {
-      alert(`${product.name} is out of stock!`);
-    }
+  private resetForm() {
+    this.newProduct.set({
+      name: '', description: '', price: 0, cost_price: 0, stock: 0,
+      sku: '', barcode: '', tax_rate: 0, tax_type: 'VAT',
+      store_id: 1, category_id: 1, is_perishable: false,
+      is_visible_in_mobile_app: true, imageUrl: ''
+    });
   }
 }
-

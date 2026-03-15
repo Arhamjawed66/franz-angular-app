@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 import { InventoryDTO } from '../dto/inventoryDTO';
 import { environment } from '../../environments/environment';
 
@@ -11,9 +11,28 @@ export class InventoryService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
-  // Get all inventory items
+  // ⭐ Get all inventory items with Mapping Fix
   getInventory(): Observable<InventoryDTO[]> {
-    return this.http.get<InventoryDTO[]>(`${this.apiUrl}/inventory`);
+    return this.http.get<any>(`${this.apiUrl}/inventory`).pipe(
+      map(res => {
+        // Backend data aksar 'data' ya 'content' array ke andar hota hai
+        const items = Array.isArray(res) ? res : (res.data || res.content || []);
+        
+        return items.map((item: any) => ({
+          ...item,
+          // Agar backend se keys product_name ya product_description hain
+          id: item.id || item.product_id,
+          name: item.name || item.product_name || item.title || 'Unknown Product',
+          description: item.description || item.product_description || item.batch_no || '',
+          stock_quantity: item.stock_quantity ?? item.stock ?? 0,
+          price: item.price ?? 0
+        } as InventoryDTO));
+      }),
+      catchError(err => {
+        console.error('Inventory Fetch Error:', err);
+        return of([]); // Error ki surat mein khali array bhej do taake app crash na ho
+      })
+    );
   }
 
   // Get inventory item by ID
@@ -32,18 +51,8 @@ export class InventoryService {
   }
 
   // Delete inventory item
-  deleteInventory(id: number): Observable<void> {
+  deleteInventory(id: number | undefined): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/inventory/${id}`);
-  }
-
-  // Get low stock items
-  getLowStockItems(): Observable<InventoryDTO[]> {
-    return this.http.get<InventoryDTO[]>(`${this.apiUrl}/inventory/low-stock`);
-  }
-
-  // Get total inventory value
-  getTotalValue(): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/inventory/total-value`);
   }
 
   // Get status

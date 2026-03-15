@@ -1,133 +1,112 @@
-<div class="max-w-6xl mx-auto p-6">
-  <h1 class="text-3xl font-bold mb-6 text-center">Our Products</h1>
-
-  <!-- Action Buttons -->
-  <div class="flex flex-wrap gap-4 mb-6 justify-center">
-    <button 
-      (click)="showAddProductForm = !showAddProductForm"
-      class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
-      {{ showAddProductForm ? 'Cancel' : '+ Add Product' }}
-    </button>
-    
-    <button 
-      (click)="showGetById = !showGetById"
-      class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">
-      {{ showGetById ? 'Cancel' : 'Get by ID' }}
-    </button>
-  </div>
-
-  <!-- Add Product Form -->
-  <div *ngIf="showAddProductForm" class="bg-gray-100 dark:bg-gray-700 p-6 rounded-lg mb-6">
-    <h2 class="text-xl font-bold mb-4">Add New Product</h2>
-    <form (ngSubmit)="addProduct()" #addForm="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <input type="text" [(ngModel)]="newProduct.name" name="name" placeholder="Product Name" required
-        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
-      <input type="text" [(ngModel)]="newProduct.description" name="description" placeholder="Description"
-        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
-      <input type="number" [(ngModel)]="newProduct.price" name="price" placeholder="Price" required
-        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
-      <input type="number" [(ngModel)]="newProduct.stock" name="stock" placeholder="Stock" required
-        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
-      <input type="text" [(ngModel)]="newProduct.barcode" name="barcode" placeholder="Barcode"
-        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
-      <input type="date" [(ngModel)]="newProduct.expiry_date" name="expiry_date" placeholder="Expiry Date"
-        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
-      <input type="text" [(ngModel)]="newProduct.imageUrl" name="imageUrl" placeholder="Image URL"
-        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
-      <input type="number" [(ngModel)]="newProduct.store_id" name="store_id" placeholder="Store ID"
-        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
-      <input type="number" [(ngModel)]="newProduct.category_id" name="category_id" placeholder="Category ID"
-        class="p-2 border rounded dark:bg-gray-600 dark:border-gray-500">
-      <button type="submit" [disabled]="!addForm.valid"
-        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:bg-gray-400 transition col-span-2">
-        Add Product
-      </button>
-    </form>
-  </div>
-
-  <!-- Get Product by ID -->
-  <div *ngIf="showGetById" class="bg-gray-100 dark:bg-gray-700 p-6 rounded-lg mb-6">
-    <h2 class="text-xl font-bold mb-4">Get Product by ID</h2>
-    <div class="flex gap-4">
-      <input type="number" [(ngModel)]="searchId" placeholder="Enter Product ID"
-        class="p-2 border rounded flex-1 dark:bg-gray-600 dark:border-gray-500">
-      <button (click)="getProductById()"
-        class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">
-        Search
-      </button>
+<div class="min-h-screen p-4 md:p-8 transition-all duration-300"
+     [ngClass]="themeService.isDarkMode() ? 'bg-slate-900 text-white' : 'bg-gray-50 text-slate-900'">
+  
+  <div class="max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+      <h1 class="text-4xl font-black tracking-tight">Store<span class="text-indigo-600">Pro</span> Products</h1>
+      
+      <div class="flex gap-3">
+        <button (click)="showSearchById.set(!showSearchById())" 
+          class="px-5 py-2.5 rounded-xl border-2 border-indigo-500 text-indigo-500 font-bold hover:bg-indigo-50 transition">
+          Find by ID
+        </button>
+        <button (click)="showAddForm.set(!showAddForm())" 
+          class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 dark:shadow-none transition">
+          + Add Product
+        </button>
+      </div>
     </div>
-    
-    <!-- Search Result -->
-    <div *ngIf="foundProduct" class="mt-4 p-4 bg-white dark:bg-gray-800 rounded">
-      <h3 class="font-bold">Product Found:</h3>
-      <p><strong>Name:</strong> {{ foundProduct.name }}</p>
-      <p><strong>Description:</strong> {{ foundProduct.description }}</p>
-      <p><strong>Price:</strong> ₹{{ foundProduct.price }}</p>
-      <p><strong>Stock:</strong> {{ foundProduct.stock }}</p>
-      <p *ngIf="foundProduct.barcode"><strong>Barcode:</strong> {{ foundProduct.barcode }}</p>
-      <p *ngIf="foundProduct.expiry_date"><strong>Expiry:</strong> {{ foundProduct.expiry_date | date:'dd/MM/yyyy' }}</p>
+
+    <div *ngIf="showSearchById()" class="mb-8 p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 animate-in slide-in-from-top">
+      <div class="flex gap-4 max-w-md">
+        <input type="number" [(ngModel)]="searchId" placeholder="Enter Product ID" 
+               class="flex-1 p-3 rounded-xl border dark:bg-slate-700 dark:border-slate-600 outline-none focus:ring-2 focus:ring-indigo-500">
+        <button (click)="getProductById()" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold">Search</button>
+      </div>
     </div>
-    
-    <div *ngIf="searchError" class="mt-4 text-red-500">
-      {{ searchError }}
-    </div>
-  </div>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading()" class="flex justify-center items-center py-16">
-    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-  </div>
-
-  <!-- Error State -->
-  <div *ngIf="error()" class="text-center py-16">
-    <p class="text-red-500 text-lg mb-4">{{ error() }}</p>
-    <button (click)="loadProducts()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-      Try Again
-    </button>
-  </div>
-
-  <!-- Products Grid -->
-  <div *ngIf="!isLoading() && !error()" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let product of products()" 
-         class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden flex flex-col">
-
-      <!-- Product Image -->
-      <img [src]="product.imageUrl || 'https://via.placeholder.com/300x200'" alt="{{product.name}}" 
-           class="h-48 w-full object-cover">
-
-      <!-- Product Info -->
-      <div class="p-4 flex-1 flex flex-col justify-between">
-        <div>
-          <h2 class="text-xl font-semibold mb-2">{{ product.name }}</h2>
-          <p class="text-gray-600 dark:text-gray-300 mb-4">{{ product.description }}</p>
-          <p class="text-lg font-bold mb-2">₹{{ product.price }}</p>
-          <p class="text-sm text-gray-500">Stock: {{ product.stock }}</p>
-          <!-- Barcode and Expiry Display -->
-          <p *ngIf="product.barcode" class="text-xs text-gray-500">Barcode: {{ product.barcode }}</p>
-          <p *ngIf="product.expiry_date" class="text-xs text-gray-500">Expiry: {{ product.expiry_date | date:'dd/MM/yyyy' }}</p>
+    <div *ngIf="showAddForm()" class="mb-10 p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-gray-100 dark:border-slate-700 animate-in zoom-in-95">
+      <h2 class="text-2xl font-bold mb-6">Create New Inventory Item</h2>
+      <form (ngSubmit)="addProduct()" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="md:col-span-2 space-y-4">
+          <input type="text" [(ngModel)]="newProduct().name" name="name" placeholder="Product Name*" required class="w-full p-3 rounded-xl border dark:bg-slate-700">
+          <textarea [(ngModel)]="newProduct().description" name="description" placeholder="Description" rows="3" class="w-full p-3 rounded-xl border dark:bg-slate-700"></textarea>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="mt-4 flex gap-2">
-          <button 
-            (click)="addToCart(product)"
-            [disabled]="!product.stock || product.stock === 0"
-            class="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition">
-            {{ (product.stock ?? 0) > 0 ? 'Add to Cart' : 'Out of Stock' }}
-          </button>
-          <button 
-            *ngIf="product.id"
-            (click)="deleteProduct(product.id!)"
-            class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition">
-            Delete
+        <div class="space-y-4">
+          <input type="text" [(ngModel)]="newProduct().imageUrl" name="imageUrl" placeholder="Image URL" class="w-full p-3 rounded-xl border dark:bg-slate-700">
+          <div class="h-32 rounded-xl bg-gray-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden border-2 border-dashed">
+            <img *ngIf="newProduct().imageUrl" [src]="newProduct().imageUrl" class="h-full w-full object-cover">
+            <span *ngIf="!newProduct().imageUrl" class="text-gray-400 text-xs text-center p-2">Image Preview</span>
+          </div>
+        </div>
+
+        <input type="number" [(ngModel)]="newProduct().price" name="price" placeholder="Selling Price (₹)" class="p-3 rounded-xl border dark:bg-slate-700">
+        <input type="number" [(ngModel)]="newProduct().cost_price" name="cost_price" placeholder="Cost Price (₹)" class="p-3 rounded-xl border dark:bg-slate-700">
+        <input type="number" [(ngModel)]="newProduct().stock" name="stock" placeholder="Initial Stock" class="p-3 rounded-xl border dark:bg-slate-700">
+
+        <input type="text" [(ngModel)]="newProduct().sku" name="sku" placeholder="SKU Number" class="p-3 rounded-xl border dark:bg-slate-700">
+        <input type="text" [(ngModel)]="newProduct().barcode" name="barcode" placeholder="Barcode" class="p-3 rounded-xl border dark:bg-slate-700">
+        <input type="date" [(ngModel)]="newProduct().expiry_date" name="expiry_date" class="p-3 rounded-xl border dark:bg-slate-700 text-gray-400">
+
+        <div class="md:col-span-3 flex flex-wrap gap-6 p-4 bg-gray-50 dark:bg-slate-900/50 rounded-2xl">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" [(ngModel)]="newProduct().is_perishable" name="is_perishable" class="w-5 h-5 rounded accent-indigo-600">
+            <span class="text-sm font-medium">Perishable Item</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" [(ngModel)]="newProduct().is_visible_in_mobile_app" name="mobile" class="w-5 h-5 rounded accent-indigo-600">
+            <span class="text-sm font-medium">Show in Mobile App</span>
+          </label>
+        </div>
+
+        <button type="submit" class="md:col-span-3 bg-indigo-600 text-white py-4 rounded-2xl font-black text-lg hover:bg-indigo-700 transition">
+          CONFIRM & SAVE PRODUCT
+        </button>
+      </form>
+    </div>
+
+    <div *ngIf="!isLoading()" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div *ngFor="let p of products()" 
+           class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 dark:border-slate-700">
+        
+        <div class="relative h-48">
+          <img [src]="p.imageUrl || 'https://via.placeholder.com/400x300'" class="h-full w-full object-cover">
+          <div class="absolute top-3 left-3 flex gap-2">
+            <span *ngIf="p.is_perishable" class="bg-red-500 text-white text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wider">Perishable</span>
+            <span *ngIf="p.is_visible_in_mobile_app" class="bg-blue-500 text-white text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wider">Mobile App</span>
+          </div>
+        </div>
+
+        <div class="p-5">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg leading-tight truncate pr-2">{{ p.name }}</h3>
+            <span class="text-indigo-600 font-black text-xl">₹{{ p.price }}</span>
+          </div>
+          <p class="text-slate-500 dark:text-slate-400 text-sm line-clamp-2 mb-4 h-10">{{ p.description }}</p>
+          
+          <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-900 rounded-2xl mb-4">
+            <div class="text-center">
+              <p class="text-[10px] text-gray-400 uppercase font-bold">Stock</p>
+              <p class="font-bold" [class.text-red-500]="(p.stock ?? 0) < 5">{{ p.stock }}</p>
+            </div>
+            <div class="text-center border-l border-r px-4 border-gray-200 dark:border-slate-700">
+              <p class="text-[10px] text-gray-400 uppercase font-bold">Tax</p>
+              <p class="font-bold">{{ p.tax_rate }}%</p>
+            </div>
+            <div class="text-center">
+              <p class="text-[10px] text-gray-400 uppercase font-bold">SKU</p>
+              <p class="font-bold text-[10px] truncate w-12">{{ p.sku || 'N/A' }}</p>
+            </div>
+          </div>
+
+          <button (click)="deleteProduct(p.id)" 
+                  class="w-full py-2.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold transition">
+            Remove Product
           </button>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Empty State -->
-  <div *ngIf="!isLoading() && !error() && products().length === 0" class="text-center py-16 text-gray-500">
-    No products available.
   </div>
 </div>
