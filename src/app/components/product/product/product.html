@@ -1,112 +1,57 @@
-<div class="min-h-screen p-4 md:p-8 transition-all duration-300"
-     [ngClass]="themeService.isDarkMode() ? 'bg-slate-900 text-white' : 'bg-gray-50 text-slate-900'">
-  
-  <div class="max-w-7xl mx-auto">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
-      <h1 class="text-4xl font-black tracking-tight">Store<span class="text-indigo-600">Pro</span> Products</h1>
+<div *ngIf="!isLoading()" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"> <div *ngFor="let p of products()" 
+       class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 dark:border-slate-700">
+    
+    <div class="relative h-56 bg-gray-100 dark:bg-slate-700 overflow-hidden"> <img *ngIf="p.imageUrl" [src]="p.imageUrl" 
+           class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
       
-      <div class="flex gap-3">
-        <button (click)="showSearchById.set(!showSearchById())" 
-          class="px-5 py-2.5 rounded-xl border-2 border-indigo-500 text-indigo-500 font-bold hover:bg-indigo-50 transition">
-          Find by ID
-        </button>
-        <button (click)="showAddForm.set(!showAddForm())" 
-          class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 dark:shadow-none transition">
-          + Add Product
-        </button>
+      <div *ngIf="!p.imageUrl" class="flex flex-col items-center justify-center h-full text-center p-6 text-gray-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-2 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+        <span class="text-xs font-bold uppercase tracking-widest">No Image</span>
+        <span class="text-[10px] opacity-70 mt-1">#{{ p.sku || p.id }}</span>
+      </div>
+
+      <div class="absolute top-3 left-3 flex flex-col gap-1.5">
+        <span *ngIf="p.is_perishable" class="bg-red-500/90 backdrop-blur-sm text-white text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider shadow-sm">Perishable</span>
+        <span *ngIf="p.is_visible_in_mobile_app" class="bg-blue-500/90 backdrop-blur-sm text-white text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider shadow-sm">Mobile App</span>
       </div>
     </div>
 
-    <div *ngIf="showSearchById()" class="mb-8 p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 animate-in slide-in-from-top">
-      <div class="flex gap-4 max-w-md">
-        <input type="number" [(ngModel)]="searchId" placeholder="Enter Product ID" 
-               class="flex-1 p-3 rounded-xl border dark:bg-slate-700 dark:border-slate-600 outline-none focus:ring-2 focus:ring-indigo-500">
-        <button (click)="getProductById()" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold">Search</button>
+    <div class="p-6"> <div class="flex justify-between items-center mb-2.5">
+        <h3 class="font-bold text-xl leading-tight truncate pr-2 text-slate-800 dark:text-white">{{ p.name }}</h3>
+        <span class="text-indigo-600 font-black text-2xl flex items-center gap-1">
+          <span class="text-sm font-bold opacity-70">$</span>{{ p.price }}
+        </span>
       </div>
-    </div>
-
-    <div *ngIf="showAddForm()" class="mb-10 p-8 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-gray-100 dark:border-slate-700 animate-in zoom-in-95">
-      <h2 class="text-2xl font-bold mb-6">Create New Inventory Item</h2>
-      <form (ngSubmit)="addProduct()" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <div class="md:col-span-2 space-y-4">
-          <input type="text" [(ngModel)]="newProduct().name" name="name" placeholder="Product Name*" required class="w-full p-3 rounded-xl border dark:bg-slate-700">
-          <textarea [(ngModel)]="newProduct().description" name="description" placeholder="Description" rows="3" class="w-full p-3 rounded-xl border dark:bg-slate-700"></textarea>
-        </div>
-
-        <div class="space-y-4">
-          <input type="text" [(ngModel)]="newProduct().imageUrl" name="imageUrl" placeholder="Image URL" class="w-full p-3 rounded-xl border dark:bg-slate-700">
-          <div class="h-32 rounded-xl bg-gray-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden border-2 border-dashed">
-            <img *ngIf="newProduct().imageUrl" [src]="newProduct().imageUrl" class="h-full w-full object-cover">
-            <span *ngIf="!newProduct().imageUrl" class="text-gray-400 text-xs text-center p-2">Image Preview</span>
+      
+      <p class="text-slate-500 dark:text-slate-400 text-sm line-clamp-2 mb-5 h-10">{{ p.description || 'No description available for this product.' }}</p>
+      
+      <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-900 rounded-3xl mb-5 border border-gray-100 dark:border-slate-700">
+        <div class="text-center flex-1">
+          <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Stock</p>
+          <div class="flex items-center justify-center gap-1.5">
+            <span class="w-2 h-2 rounded-full" [ngClass]="(p.stock ?? 0) < 5 ? 'bg-red-500' : 'bg-green-500'"></span>
+            <p class="font-extrabold text-lg text-slate-800 dark:text-white" [class.text-red-500]="(p.stock ?? 0) < 5">{{ p.stock }}</p>
           </div>
         </div>
-
-        <input type="number" [(ngModel)]="newProduct().price" name="price" placeholder="Selling Price (₹)" class="p-3 rounded-xl border dark:bg-slate-700">
-        <input type="number" [(ngModel)]="newProduct().cost_price" name="cost_price" placeholder="Cost Price (₹)" class="p-3 rounded-xl border dark:bg-slate-700">
-        <input type="number" [(ngModel)]="newProduct().stock" name="stock" placeholder="Initial Stock" class="p-3 rounded-xl border dark:bg-slate-700">
-
-        <input type="text" [(ngModel)]="newProduct().sku" name="sku" placeholder="SKU Number" class="p-3 rounded-xl border dark:bg-slate-700">
-        <input type="text" [(ngModel)]="newProduct().barcode" name="barcode" placeholder="Barcode" class="p-3 rounded-xl border dark:bg-slate-700">
-        <input type="date" [(ngModel)]="newProduct().expiry_date" name="expiry_date" class="p-3 rounded-xl border dark:bg-slate-700 text-gray-400">
-
-        <div class="md:col-span-3 flex flex-wrap gap-6 p-4 bg-gray-50 dark:bg-slate-900/50 rounded-2xl">
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" [(ngModel)]="newProduct().is_perishable" name="is_perishable" class="w-5 h-5 rounded accent-indigo-600">
-            <span class="text-sm font-medium">Perishable Item</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" [(ngModel)]="newProduct().is_visible_in_mobile_app" name="mobile" class="w-5 h-5 rounded accent-indigo-600">
-            <span class="text-sm font-medium">Show in Mobile App</span>
-          </label>
+        <div class="text-center border-l border-r px-5 border-gray-200 dark:border-slate-700 flex-1">
+          <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Tax</p>
+          <p class="font-extrabold text-lg text-slate-800 dark:text-white">{{ p.tax_rate }}<span class="text-xs font-medium">%</span></p>
         </div>
-
-        <button type="submit" class="md:col-span-3 bg-indigo-600 text-white py-4 rounded-2xl font-black text-lg hover:bg-indigo-700 transition">
-          CONFIRM & SAVE PRODUCT
-        </button>
-      </form>
-    </div>
-
-    <div *ngIf="!isLoading()" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div *ngFor="let p of products()" 
-           class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 dark:border-slate-700">
-        
-        <div class="relative h-48">
-          <img [src]="p.imageUrl || 'https://via.placeholder.com/400x300'" class="h-full w-full object-cover">
-          <div class="absolute top-3 left-3 flex gap-2">
-            <span *ngIf="p.is_perishable" class="bg-red-500 text-white text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wider">Perishable</span>
-            <span *ngIf="p.is_visible_in_mobile_app" class="bg-blue-500 text-white text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wider">Mobile App</span>
-          </div>
-        </div>
-
-        <div class="p-5">
-          <div class="flex justify-between items-start mb-2">
-            <h3 class="font-bold text-lg leading-tight truncate pr-2">{{ p.name }}</h3>
-            <span class="text-indigo-600 font-black text-xl">₹{{ p.price }}</span>
-          </div>
-          <p class="text-slate-500 dark:text-slate-400 text-sm line-clamp-2 mb-4 h-10">{{ p.description }}</p>
-          
-          <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-900 rounded-2xl mb-4">
-            <div class="text-center">
-              <p class="text-[10px] text-gray-400 uppercase font-bold">Stock</p>
-              <p class="font-bold" [class.text-red-500]="(p.stock ?? 0) < 5">{{ p.stock }}</p>
-            </div>
-            <div class="text-center border-l border-r px-4 border-gray-200 dark:border-slate-700">
-              <p class="text-[10px] text-gray-400 uppercase font-bold">Tax</p>
-              <p class="font-bold">{{ p.tax_rate }}%</p>
-            </div>
-            <div class="text-center">
-              <p class="text-[10px] text-gray-400 uppercase font-bold">SKU</p>
-              <p class="font-bold text-[10px] truncate w-12">{{ p.sku || 'N/A' }}</p>
-            </div>
-          </div>
-
-          <button (click)="deleteProduct(p.id)" 
-                  class="w-full py-2.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold transition">
-            Remove Product
-          </button>
+        <div class="text-center flex-1">
+          <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">SKU</p>
+          <p class="font-extrabold text-xs truncate w-16 mx-auto bg-gray-100 dark:bg-slate-700 px-2 py-0.5 rounded-md text-slate-600 dark:text-gray-300">{{ p.sku || 'N/A' }}</p>
         </div>
       </div>
+
+      <button (click)="deleteProduct(p.id)" 
+              class="w-full py-3 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold transition flex items-center justify-center gap-2 group-hover:shadow-md">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        Remove Product
+      </button>
     </div>
   </div>
 </div>
