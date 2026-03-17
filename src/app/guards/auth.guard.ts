@@ -11,7 +11,12 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   if (currentUser && currentUser.role === 'admin') {
     return true;
-  } else {
+  } 
+  if ((currentUser && currentUser.role === 'store' || currentUser && currentUser.role  === 'supply') && state.url.includes('dashboard')) {
+    return true;
+  }
+  
+  else {
     // Professional approach: UrlTree return karein navigation ke liye
     return router.createUrlTree(['/login']);
   }

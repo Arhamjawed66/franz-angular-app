@@ -48,6 +48,16 @@
 
           <div *ngIf="user" class="space-y-2">
             <p class="text-xs font-bold border-b pb-1 truncate">{{ user.email }}</p>
+            
+            <div *ngIf="user.role === 'admin' || user.role === 'store' || user.role === 'supply'" class="pt-1 space-y-1">
+              <button
+                (click)="navigateToDashboard()"
+                class="flex items-center gap-2 w-full py-1 px-2 rounded hover:bg-blue-500 hover:text-white transition text-left text-sm"
+              >
+                <fa-icon [icon]="faChartLine"></fa-icon> Dashboard
+              </button>
+            </div>
+            
             <button
               (click)="logout()"
               class="flex items-center gap-2 w-full py-1 px-2 rounded hover:bg-red-500 hover:text-white transition text-left"
@@ -116,6 +126,16 @@
         </ng-container>
         <div *ngIf="user" class="space-y-2">
           <p class="text-xs font-bold border-b pb-2 truncate">{{ user.email }}</p>
+          
+          <div *ngIf="user.role === 'admin' || user.role === 'store' || user.role === 'supply'" class="pt-1 space-y-1">
+            <button
+              (click)="navigateToDashboard()"
+              class="flex items-center gap-2 w-full py-2 px-3 rounded hover:bg-blue-500 hover:text-white transition text-left text-sm"
+            >
+              <fa-icon [icon]="faChartLine"></fa-icon> Dashboard
+            </button>
+          </div>
+          
           <button
             (click)="logout()"
             class="flex items-center gap-2 w-full py-2 px-3 rounded hover:bg-red-500 hover:text-white transition text-left"
